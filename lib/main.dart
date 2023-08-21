@@ -1,8 +1,8 @@
 // import 'package:app/user/splashscree.dart';
 // import 'package:app/user/splashscree.dart';
 import 'package:flutter/material.dart';
-// import 'Admin/adminDashboard.dart';
-import 'user/userdashboard.dart';
+import 'Admin/adminDashboard.dart';
+// import 'user/userdashboard.dart';
 
 void main() {
   runApp(const MyApp());
@@ -21,10 +21,10 @@ class MyApp extends StatelessWidget {
         useMaterial3: true,
       ),
       // home: FuelAppDashboard(),
-      home: UserDashboardScreen(), //test //22222222222222
+      // home: UserDashboardScreen(),
       // ignore: prefer_const_constructors
       // home: WelcomeScreen(),
-      // home: FuelAppDashboard(),//admin
+      home: FuelAppDashboard(), //admin
       debugShowCheckedModeBanner: false,
     );
   }

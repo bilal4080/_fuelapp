@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import 'fuelrates.dart';
+
 class FuelAppDashboard extends StatefulWidget {
   @override
   _FuelAppDashboardState createState() => _FuelAppDashboardState();
@@ -21,6 +23,8 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
     'Order 4',
     'Order 5',
   ];
+
+  List<String> acceptedOrderList = [];
 
   void _deleteFuelStation(int index) {
     setState(() {
@@ -173,19 +177,26 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
     );
   }
 
+  void _acceptRecentFuelOrder(int index) {
+    String acceptedOrder = recentFuelOrders[index];
+    setState(() {
+      acceptedOrderList.add(acceptedOrder);
+    });
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) =>
+            AcceptedOrdersScreen(acceptedOrderList: acceptedOrderList),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        iconTheme: IconThemeData(
-          color: Colors.white,
-        ),
-        title: Text(
-          'Fuel App',
-          style: TextStyle(color: Colors.white),
-        ),
+        title: Text('Fuel App'),
         backgroundColor: Colors.orange,
-        elevation: 4,
       ),
       drawer: Drawer(
         child: ListView(
@@ -203,12 +214,14 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
               ),
             ),
             ListTile(
-              leading: Icon(Icons.check),
-              title: Text('Accept'),
-              onTap: () {
-                // Handle accept feature
-              },
-            ),
+                leading: Icon(Icons.check),
+                title: Text('Fuel Rate'),
+                onTap: () {
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AdminScreen()),
+                  );
+                }),
             Divider(
               thickness: 1,
               color: Colors.grey,
@@ -216,10 +229,17 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
               endIndent: 16,
             ),
             ListTile(
-              leading: Icon(Icons.delete),
-              title: Text('Delete'),
+              leading: Icon(Icons.list),
+              title: Text('Accepted Orders'),
               onTap: () {
-                // Handle delete feature
+                Navigator.pop(context); // Close the drawer
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => AcceptedOrdersScreen(
+                        acceptedOrderList: acceptedOrderList),
+                  ),
+                );
               },
             ),
             Divider(
@@ -240,17 +260,6 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
       ),
       body: Column(
         children: [
-          Container(
-            padding: EdgeInsets.all(16),
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search for fuel stations',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8),
-                ),
-              ),
-            ),
-          ),
           SizedBox(height: 16),
           Text(
             'Fuel Stations',
@@ -349,6 +358,12 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
                           ),
                         ),
                         IconButton(
+                          icon: Icon(Icons.check_circle),
+                          onPressed: () {
+                            _acceptRecentFuelOrder(index);
+                          },
+                        ),
+                        IconButton(
                           icon: Icon(Icons.edit),
                           onPressed: () {
                             _editRecentFuelOrder(index);
@@ -392,9 +407,58 @@ class _FuelAppDashboardState extends State<FuelAppDashboard> {
   }
 }
 
+class AcceptedOrdersScreen extends StatefulWidget {
+  final List<String> acceptedOrderList;
+
+  AcceptedOrdersScreen({required this.acceptedOrderList});
+
+  @override
+  _AcceptedOrdersScreenState createState() => _AcceptedOrdersScreenState();
+}
+
+class _AcceptedOrdersScreenState extends State<AcceptedOrdersScreen> {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Accepted Orders'),
+      ),
+      body: ListView.builder(
+        itemCount: widget.acceptedOrderList.length,
+        itemBuilder: (context, index) {
+          return Container(
+            decoration: BoxDecoration(
+              border: Border.all(
+                color: Colors.grey,
+                width: 1.0,
+              ),
+              borderRadius: BorderRadius.circular(8.0),
+            ),
+            margin: EdgeInsets.symmetric(vertical: 8.0, horizontal: 16.0),
+            child: ListTile(
+              title: Text(
+                widget.acceptedOrderList[index],
+                style: TextStyle(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+            ),
+          );
+        },
+      ),
+    );
+  }
+}
+
 class FuelStation {
   String name;
   String address;
 
   FuelStation({required this.name, required this.address});
+}
+
+void main() {
+  runApp(MaterialApp(
+    home: FuelAppDashboard(),
+  ));
 }
